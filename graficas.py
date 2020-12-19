@@ -8,13 +8,13 @@ class Graficas:
 
     plt.rcParams['figure.figsize'] = (6, 2)
     sb.set()
-    def plotConsumption(year,month,central):
-        meses=month
-        conditionYear =  (Graficas.newDataFrame.Fecha.dt.year == year)
+    def plotConsumption(central):
+        meses=[Graficas.newDataFrame.Fecha.dt.month[0]]
+        conditionYear =  (Graficas.newDataFrame.Fecha.dt.year == Graficas.newDataFrame.Fecha.dt.year[0])
         dia=Graficas.newDataFrame[conditionYear]
-        if month[0] >0:
-            for i in range(0,len(month)):            
-                meses[i]=dia[dia.Fecha.dt.month == month[i]]
+        if meses[0] >0:
+            for i in range(0,len(meses)):            
+                meses[i]=dia[dia.Fecha.dt.month == meses[i]]
 
                 if i>0:
                     meses[i]=Graficas.pd.concat([meses[i],meses[i-1]],axis=0,  sort=False ).fillna(0)
@@ -24,9 +24,12 @@ class Graficas:
         if central=="Todas":
             Graficas.plt.plot(meses[-1]["Fecha"],meses[-1]["Capacidad promedio realizada MW"],alpha=1) #histograma eje X:numero de clusters, eje Y:scores inertia obtenidos 
         else:
-            Graficas.plt.plot(meses[-1]["Fecha"],meses[-1][central],alpha=1)
+            datosParaGraficarX=meses[-1]["Fecha"]
+            datosParaGraficarY=meses[-1][central]
+            #Graficas.plt.plot(datosParaGraficarX,datosParaGraficarY,alpha=1)
     
-        Graficas.plt.xlabel('Fecha') #etiqueta del eje X
-        Graficas.plt.ylabel('Consumo en MW') #etiqueta del eje Y
-        Graficas.plt.title('consumo del %s en la central: %s'%(year,central)) #etiqueta de titulo
-        Graficas.plt.show() #muestra el histograma 
+        #Graficas.plt.xlabel('Fecha') #etiqueta del eje X
+        #Graficas.plt.ylabel('Consumo en MW') #etiqueta del eje Y
+        #Graficas.plt.title('consumo del %s en la central: %s'%(Graficas.newDataFrame.Fecha.dt.year[0],central)) #etiqueta de titulo
+        #Graficas.plt.show() #muestra el histograma 
+        return datosParaGraficarX,datosParaGraficarY

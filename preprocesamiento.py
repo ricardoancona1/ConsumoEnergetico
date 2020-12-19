@@ -2,12 +2,12 @@ class Preprocessing:
     import pandas as pd
     from graficas import Graficas
     suma=""
-    def cargarArchivo(filePath,centrales):
+    def cargarArchivo(filePath):
         read_file = Preprocessing.pd.read_excel('%s' % (filePath))
         read_file.to_csv('./archivo.csv', index=None, header=True)
-        Preprocessing.extraerCentrales(centrales)
+        Preprocessing.extraerCentrales()
 
-    def extraerCentrales(centrales):
+    def extraerCentrales():
         df = Preprocessing.pd.read_csv('./archivo.csv')
         capacidadRealizada = df[[
             'Día', 'Central', 'Capacidad promedio realizada MW', 'Capacidad promedio prevista MW']]
@@ -17,16 +17,16 @@ class Preprocessing:
             'Día', 'Capacidad promedio realizada MW', 'Central', 'Capacidad promedio prevista MW']]
         capacidadSinCentral.to_csv(
             './soloCentral.csv', index=False)
-        Preprocessing.sumarCentrales(centrales)
+        Preprocessing.sumarCentrales()
 
-    def sumarCentrales(centrales):
+    def sumarCentrales():
         soloCentral = Preprocessing.pd.read_csv('./soloCentral.csv')
         Preprocessing.suma = soloCentral.groupby('Día').sum().reset_index()
         Preprocessing.suma = Preprocessing.suma.sort_values(by="Día")
         Preprocessing.suma.to_csv('./sumadas.csv', index=False)
-        Preprocessing.setCentralsAsColumns(centrales)
+        Preprocessing.setCentralsAsColumns()
 
-    def setCentralsAsColumns(centrales):
+    def setCentralsAsColumns():
         ## este codigo se encarga de encontrar las centrales y agregarlas en un dataset nuevo como columnas##
         ##se adapto para utilizarse en consumo real y previsto##
         anios = Preprocessing.pd.read_csv('./soloCentral.csv')
@@ -83,5 +83,4 @@ class Preprocessing:
         nuevoDataFrmeFinal.insert(
             6, "VADP1", tempVADP1["Capacidad promedio realizada MW"])
         nuevoDataFrmeFinal.to_csv('./final.csv', index=False)
-        Preprocessing.Graficas.plotConsumption(2009,[1],centrales)
 
