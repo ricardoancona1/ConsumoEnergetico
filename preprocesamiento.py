@@ -11,8 +11,8 @@ class Preprocessing:
         df = Preprocessing.pd.read_csv('./archivo.csv')
         capacidadRealizada = df[[
             'Día', 'Central', 'Capacidad promedio realizada MW', 'Capacidad promedio prevista MW']]
-        capacidadYucatan = capacidadRealizada.loc[(capacidadRealizada['Central'] == 'MDAP1 ') | (capacidadRealizada['Central'] == 'MDPP1 ') | (capacidadRealizada['Central'] == 'MDTP1 ') | (capacidadRealizada['Central'] == 'NCMP1 ') | (capacidadRealizada['Central'] == 'NCMP1 ') | (capacidadRealizada['Central'] == 'NCTP1 ') | (capacidadRealizada['Central'] == 'VADP1 ') | (
-            capacidadRealizada['Central'] == 'VLTP1 ') | (capacidadRealizada['Central'] == 'MDAP1') | (capacidadRealizada['Central'] == 'MDPP1') | (capacidadRealizada['Central'] == 'MDTP1') | (capacidadRealizada['Central'] == 'NCMP1') | (capacidadRealizada['Central'] == 'NCMP1') | (capacidadRealizada['Central'] == 'NCTP1') | (capacidadRealizada['Central'] == 'VADP1') | (capacidadRealizada['Central'] == 'VLTP1')]
+        capacidadYucatan = capacidadRealizada.loc[(capacidadRealizada['Central'] == 'MDAP1 ') | (capacidadRealizada['Central'] == 'MDAP1') | (capacidadRealizada['Central'] == 'MDPP1') | (capacidadRealizada['Central'] == 'MDPP1 ') | (capacidadRealizada['Central'] == 'VLTP1') | (capacidadRealizada['Central'] == 'VLTP1 ') | (capacidadRealizada['Central'] == 'NCTP1') | (
+            capacidadRealizada['Central'] == 'NCTP1 ') | (capacidadRealizada['Central'] == 'NCMP1') | (capacidadRealizada['Central'] == 'NCMP1 ') | (capacidadRealizada['Central'] == 'MDTP1') | (capacidadRealizada['Central'] == 'MDTP1 ') | (capacidadRealizada['Central'] == 'VADP1') | (capacidadRealizada['Central'] == 'VADP1 ') ]
         capacidadSinCentral = capacidadYucatan[[
             'Día', 'Capacidad promedio realizada MW', 'Central', 'Capacidad promedio prevista MW']]
         capacidadSinCentral.to_csv(

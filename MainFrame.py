@@ -4,6 +4,7 @@ class MainFrame:
     import matplotlib.pyplot as plt
     from graficas import Graficas
     from preprocesamiento import Preprocessing
+    from Heatmap import Heatmap
 
     def draw_figure_w_toolbar(canvas, fig):
         if canvas.children:
@@ -14,7 +15,7 @@ class MainFrame:
 
         figure_canvas_agg.get_tk_widget().pack(side='right', fill='both', expand=1)
     
-    centralesOptions = ['TODAS', 'MDAP1', 'MDPP1',
+    centralesOptions = ['-Seleccione-', 'MDAP1', 'MDPP1',
                         'VLTP1', 'NCTP1', 'NCMP1', 'MDTP1', 'VADP1']
     years = ['2006', '2007', '2008', '2009', '2010',
              '2011', '2012', '2013', '2014', '2015']
@@ -40,10 +41,11 @@ class MainFrame:
             [sg.Button('Nueva Prediccion')]]
     tab1 = [[sg.In(), excel],
             [sg.Text('Seleccione Central Eléctrica:', font=("Arial", 15)),centralesGUI2],
-            [sg.Button('Generar')], [sg.Text('Grafica:', font=("Arial", 15))],
-            [sg.Canvas(key='fig_cv', size=(400 * 2, 400))]
+            [sg.Button('Generar',key="Generar")], [sg.Text('Grafica:', font=("Arial", 15))],
+            [sg.Canvas(key='fig_cv', size=(150 * 2, 150))]
         ,
-        [sg.Text('Mapa de Calor:', font=("Arial", 15))]
+        [sg.Text('Mapa de Calor:', font=("Arial", 15))],
+        [sg.Canvas(key='fig_cv2', size=(150 * 2, 150))]
 
     ]
 
@@ -53,23 +55,41 @@ class MainFrame:
     while True:
         event, values = window.read()
         try:
-            Preprocessing.cargarArchivo(values["filePath"])
-            graficaX,graficaY=Graficas.plotConsumption(values["comboCentrales"])
+            if event=="Generar":
+                
+                Preprocessing.cargarArchivo(values["filePath"])
+                graficaX,graficaY=Graficas.plotConsumption(values["comboCentrales"])
             ####matplotlib#####
-            plt.figure(1)
-            fig = plt.gcf()
-            DPI = fig.get_dpi()
+                plt.figure(1)
+                plt.clf()
+                fig = plt.gcf()
+                DPI = fig.get_dpi()
             # ------------------------------- you have to play with this size to reduce the movement error when the mouse hovers over the figure, it's close to canvas size
-            fig.set_size_inches(404 * 2 / float(DPI), 404 / float(DPI))
+                plt.rcParams['figure.figsize'] = (6, 3)
             # -------------------------------
-            x = graficaX
-            y = graficaY
-            plt.plot(x, y)
-            Graficas.plt.xlabel('Fecha') #etiqueta del eje X
-            Graficas.plt.ylabel('Consumo en MW') #etiqueta del eje Y
-            Graficas.plt.title('consumo de la central') #etiqueta de titulo
-            plt.grid()
+                x = graficaX
+                y = graficaY
+                plt.plot(x, y)
+                Graficas.plt.xlabel('Fecha') #etiqueta del eje X
+                Graficas.plt.ylabel('Consumo en MW') #etiqueta del eje Y
+                Graficas.plt.tight_layout()
+                Graficas.plt.title('consumo de la central %s'%(values["comboCentrales"])) #etiqueta de titulo
+                plt.grid()
+                plt.figure(2)
+                Heatmap.plt1.clf()
+                fig2 = plt.gcf()
+                DPI = fig2.get_dpi()
+                draw_figure_w_toolbar(window['fig_cv'].TKCanvas, fig)
+                heatmap_data=Heatmap.showHeatMap(values["comboCentrales"])
+                Heatmap.sns.heatmap(heatmap_data)
+                Heatmap.plt1.xlabel("dia del mes", size=14)
+                Heatmap.plt1.ylabel("mes", size=14)
+                Heatmap.plt1.title(" Capacidad promedio realizada 2009 promedio en MW", size=14)
+                Heatmap.plt1.tight_layout()
+                Heatmap.plt1.savefig('./heatmap_with_Seaborn_python.jpg',dpi=160, figsize=(9,6))
             ####/matplotlib####
-            draw_figure_w_toolbar(window['fig_cv'].TKCanvas, fig)
+            
+                draw_figure_w_toolbar(window['fig_cv2'].TKCanvas, fig2)
+            
         except Exception as e:
             sg.Print(e)
