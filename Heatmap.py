@@ -8,7 +8,7 @@ class Heatmap:
         df=Heatmap.pd.DataFrame(Heatmap.data)
         Heatmap.pd.to_datetime(df['Fecha'])
         df['Fecha'] = Heatmap.pd.to_datetime(df['Fecha'], errors='coerce',format='%d/%m/%Y')
-        df=df[df.Fecha.dt.year==2009]
+        #df=df[df.Fecha.dt.year==2009]
         df['month'] = df['Fecha'].dt.month_name()
         df['year'] = df['Fecha'].dt.year
         df['FechaDelMes']=df['Fecha'].dt.day

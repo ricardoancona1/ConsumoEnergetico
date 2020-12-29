@@ -5,6 +5,7 @@ class MainFrame:
     from graficas import Graficas
     from preprocesamiento import Preprocessing
     from Heatmap import Heatmap
+    from prediccion import Prediccion
 
     def draw_figure_w_toolbar(canvas, fig):
         if canvas.children:
@@ -25,20 +26,17 @@ class MainFrame:
     excel = sg.FileBrowse(key="filePath")
     centralesGUI1 =  sg.Combo(centralesOptions, enable_events=False, key='combo')
     centralesGUI2=sg.Combo(centralesOptions, enable_events=False, key='comboCentrales')
-    tab2 = [[sg.Text('      Seleccione Central Eléctrica:', font=("Arial", 15)),centralesGUI1],
-            [sg.Text('   Basar Predicciones en el Periodo:', font=("Arial", 15))],
-            [sg.Text('Seleccione fecha de inicio ', font=("Arial", 10)), sg.Input(key='dateStart', size=(
-                10, 1)), sg.CalendarButton('Fecha Inicio', target=(3, 1), key='dateStart')],
-            [sg.Text('Seleccione fecha de fin    ', font=("Arial", 10)), sg.Input(key='dateEnd', size=(
-                10, 1)), sg.CalendarButton(' Fecha Fin  ', target=(4, 1), key='dateEnd')],
-            [sg.Text('Ingrese No. de Predicciones', font=("Arial", 10)), sg.Input(key='dateStart', size=(
+    tab2 = [
+
+            [sg.Text('Seleccione fecha de inicio ', font=("Arial", 10)), sg.Input(key='dateStartField', size=(
+                10, 1)), sg.CalendarButton('Fecha Inicio', target=(0, 1), key='dateStart', format='%Y-%m-%d')],
+
+            [sg.Text('Ingrese No. de Predicciones', font=("Arial", 10)), sg.Input(key='numPredicciones', size=(
              10, 1))],
-            [sg.Text('Predecir consumo energético para:', font=("Arial", 15))],
-            [sg.Output(key='-IN-', size=(30, 15))],
             [sg.Button('Predecir')],
             [sg.Text('Predicciones:', font=("Arial", 15))],
-            [sg.Output(key='-IN-', size=(30, 10))],
-            [sg.Button('Nueva Prediccion')]]
+            [sg.Output(key='PrediccionesOut', size=(30, 10))],
+            [sg.Button('Nueva Prediccion',key="nuevaPrediccion")]]
     tab1 = [[sg.In(), excel],
             [sg.Text('Seleccione Central Eléctrica:', font=("Arial", 15)),centralesGUI2],
             [sg.Button('Generar',key="Generar")], [sg.Text('Grafica:', font=("Arial", 15))],
@@ -90,6 +88,19 @@ class MainFrame:
             ####/matplotlib####
             
                 draw_figure_w_toolbar(window['fig_cv2'].TKCanvas, fig2)
-            
+            if event=="Predecir":
+                numPredicciones=values["numPredicciones"]
+                fechaInicio=values["dateStartField"]
+                predicciones=Prediccion.predecir(fechaInicio,numPredicciones)
+                for i in range(0,len(predicciones)):
+                    print(predicciones[i])
+                
+                #values['PrediccionesOut']=predicciones
+            if event=="nuevaPrediccion":
+                window['PrediccionesOut'].update('')
+                window['numPredicciones'].update('')
+                window['dateStartField'].update('')
+            if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
+                break
         except Exception as e:
             sg.Print(e)
